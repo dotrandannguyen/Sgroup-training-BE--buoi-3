@@ -1,40 +1,47 @@
-import { users } from "../data.js";
+import pool from "../database.js";
 
-// Mocking these functions as asynchronous (similar to a real Database call)
 export const userRepository = {
+
+    // Lấy tất cả user
     async findAll() {
-        return users;
+        const result = await pool.query(
+            "SELECT * FROM users"
+        );
+        return result[0];
     },
-    
+
+    // Tìm user theo id
     async findById(id) {
-        return users.find(u => u.id === id);
+        const result = await pool.query(
+            "SELECT * FROM users WHERE id = ?",
+            [id]
+        );
+        return result[0][0];
     },
-    
-    async create(userData) {
-        const newUser = {
-            id: users.length > 0 ? users[users.length - 1].id + 1 : 1,
-            ...userData
-        };
-        users.push(newUser);
-        return newUser;
+
+    // Tạo user
+    async create(user) {
+        const result = await pool.query(
+            `INSERT INTO users (full_name, email, password_hash, role)
+             VALUES (?, ?, ?, ?)`,
+            [user.full_name, user.email, user.password_hash, user.role]
+        );
+        return result[0].insertId;
     },
-    
-    async update(id, userData) {
-        const index = users.findIndex(u => u.id === id);
-        if (index !== -1) {
-            users[index] = { ...users[index], ...userData };
-            return users[index];
-        }
-        return null;
+
+    // Cập nhật user
+    async update(id, user) {
+        await pool.query(
+            `UPDATE users SET full_name = ?, email = ?, role = ? WHERE id = ?`,
+            [user.full_name, user.email, user.role, id]
+        );
     },
-    
+
+    // Xóa user
     async delete(id) {
-        const index = users.findIndex(u => u.id === id);
-        if (index !== -1) {
-            const deletedUser = users[index];
-            users.splice(index, 1);
-            return deletedUser;
-        }
-        return null;
+        await pool.query(
+            "DELETE FROM users WHERE id = ?",
+            [id]
+        );
     }
 };

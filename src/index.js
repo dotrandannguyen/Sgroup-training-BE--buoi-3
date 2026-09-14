@@ -1,7 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
-import { users, books } from "./data.js";
+import { connectionDb } from "./database.js";
 import userRouter from "./routes/user.router.js";
+import orderRouter from "./routes/order.router.js";
+import { authRouter } from "./routes/auth.router.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { NotFoundError } from "./utils/error.helper.js";
 
@@ -18,7 +20,8 @@ app.get("/", (req, res) => {
 
 // Mount User Router with /api prefix
 app.use("/", userRouter);
-
+app.use("/", orderRouter);
+app.use("/", authRouter);
 // Catch 404 for all invalid routes
 app.use((req, res, next) => {
     next(new NotFoundError(`Route not found: ${req.originalUrl}`));
@@ -26,6 +29,9 @@ app.use((req, res, next) => {
 
 // Final handler: Global Error Handler
 app.use(errorHandler);
+
+// Connect to Database
+connectionDb();
 
 app.listen(port, localhost, () => {
   console.log(`Server is running on http://${localhost}:${port}`);

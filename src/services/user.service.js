@@ -8,29 +8,26 @@ export const userService = {
 
     async getUserById(id) {
         const user = await userRepository.findById(id);
-        if (!user) {
-            throw new NotFoundError(`User not found with id: ${id}`);
-        }
+        if (!user) throw new NotFoundError(`User not found with id: ${id}`);
         return user;
     },
 
     async createUser(userData) {
-        return await userRepository.create(userData);
+        const insertId = await userRepository.create(userData);
+        return await userRepository.findById(insertId);
     },
 
     async updateUser(id, userData) {
-        const existingUser = await userRepository.findById(id);
-        if (!existingUser) {
-            throw new NotFoundError(`User not found with id: ${id} to update`);
-        }
-        return await userRepository.update(id, userData);
+        const user = await userRepository.findById(id);
+        if (!user) throw new NotFoundError(`User not found with id: ${id}`);
+        await userRepository.update(id, userData);
+        return await userRepository.findById(id);
     },
 
     async deleteUser(id) {
-        const deletedUser = await userRepository.delete(id);
-        if (!deletedUser) {
-            throw new NotFoundError(`User not found with id: ${id} to delete`);
-        }
-        return deletedUser;
+        const user = await userRepository.findById(id);
+        if (!user) throw new NotFoundError(`User not found with id: ${id}`);
+        await userRepository.delete(id);
+        return user;
     }
 };

@@ -5,7 +5,7 @@ export const userController = {
     async getAll(req, res, next) {
         try {
             const users = await userService.getAllUsers();
-            return new HttpResponse(res).success(users, "Fetched all users successfully1111ewrfwetwetwet4w");
+            return new HttpResponse(res).success(users, "Fetched all users successfully");
         } catch (error) {
             next(error);
         }
