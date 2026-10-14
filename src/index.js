@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { connectionDb } from "./database.js";
 import userRouter from "./routes/user.router.js";
 import orderRouter from "./routes/order.router.js";
+import productRouter from "./routes/product.router.js";
 import { authRouter } from "./routes/auth.router.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { NotFoundError } from "./utils/error.helper.js";
@@ -18,13 +19,22 @@ app.get("/", (req, res) => {
   res.send("Hello World LOGIN");
 });
 
-// Mount User Router with /api prefix
+// Mount routers with both root and /api prefixes for maximum compatibility
 app.use("/", userRouter);
+app.use("/api", userRouter);
+
 app.use("/", orderRouter);
+app.use("/api", orderRouter);
+
+app.use("/", productRouter);
+app.use("/api", productRouter);
+
 app.use("/", authRouter);
+app.use("/api", authRouter);
+
 // Catch 404 for all invalid routes
 app.use((req, res, next) => {
-    next(new NotFoundError(`Route not found: ${req.originalUrl}`));
+  next(new NotFoundError(`Route not found: ${req.originalUrl}`));
 });
 
 // Final handler: Global Error Handler
@@ -36,3 +46,5 @@ connectionDb();
 app.listen(port, localhost, () => {
   console.log(`Server is running on http://${localhost}:${port}`);
 });
+
+export default app;
