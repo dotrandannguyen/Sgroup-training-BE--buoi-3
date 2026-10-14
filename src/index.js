@@ -11,7 +11,9 @@ import { NotFoundError } from "./utils/error.helper.js";
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
-const localhost = "localhost";
+// Docker: phải dùng "0.0.0.0" để container mở cổng ra ngoài
+// Local:  "localhost" cũng hoạt động bình thường
+const localhost = "0.0.0.0";
 
 app.use(express.json());
 

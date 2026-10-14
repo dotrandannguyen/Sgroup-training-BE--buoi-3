@@ -1,0 +1,49 @@
+services:
+
+  # ── Backend Node.js ────────────────────────────────────────────────────────
+  backend:
+    build: .                      # Build image từ Dockerfile ở thư mục hiện tại
+    ports:
+      - "3001:3000"               # Máy thật:Container (3001 để không đụng với coding_23h:3000)
+    env_file:
+      - .env                      # Nạp biến từ file .env
+    environment:
+      # Ghi đè DB_HOST và REDIS_URL để trỏ đến service nội bộ Docker
+      DB_HOST: db
+      DB_PORT: 3306
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      db:
+        condition: service_healthy  # Chỉ khởi động sau khi MySQL sẵn sàng
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  # ── MySQL Database ─────────────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: dotrandannguyen
+      MYSQL_DATABASE: auth_demo
+    ports:
+      - "3308:3306"               # 3308 vì 3307 đã dùng bởi coding_23h-db
+    volumes:
+      - mysql_data:/var/lib/mysql                                    # Giữ data khi restart
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro      # Tự chạy schema khi lần đầu khởi động
+    healthcheck:                  # Kiểm tra MySQL đã sẵn sàng chưa
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pdotrandannguyen"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # ── Redis Cache ────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"               # 6380 vì 6379 đã dùng bởi coding_23h-redis
+    restart: unless-stopped
+
+# ── Named Volumes ──────────────────────────────────────────────────────────
+volumes:
+  mysql_data:                     # Dữ liệu MySQL được lưu bền vững
