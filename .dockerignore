@@ -1,3 +1,4 @@
+# // ok
 # Các thư mục/file này sẽ KHÔNG được copy vào Docker image khi build
 # Giúp image nhỏ hơn và không bị rò lộ thông tin nhạy cảm
 

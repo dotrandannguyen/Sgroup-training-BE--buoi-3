@@ -1,3 +1,4 @@
+// ok
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 import { productData } from './data/product.data.js';

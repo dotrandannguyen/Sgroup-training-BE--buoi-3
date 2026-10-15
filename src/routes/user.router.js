@@ -7,7 +7,7 @@ import { authMiddleware } from "../middlewares/auth.middeware.js";
 const router = express.Router();
 
 // GET: Fetch all users
-router.get('/users',authMiddleware, userController.getAll);
+router.get('/users', userController.getAll);
 
 // GET: Fetch user by id
 router.get('/users/:id', userController.getById);

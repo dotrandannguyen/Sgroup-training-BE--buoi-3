@@ -1,3 +1,4 @@
+# // ok
 # 1. Dùng Node.js 20 trên Alpine Linux (gọn nhẹ)
 #    Nếu không có internet: docker pull node:20-alpine (hoặc dùng image đã có sẵn)
 FROM node:20-alpine
